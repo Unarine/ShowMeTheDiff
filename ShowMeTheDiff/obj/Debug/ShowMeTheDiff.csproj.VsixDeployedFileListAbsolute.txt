@@ -1,0 +1,4 @@
+C:\Users\g12n1260\AppData\Local\Microsoft\VisualStudio\14.0Exp\Extensions\Company\ShowMeTheDiff\1.0\\ShowMeTheDiff.dll
+C:\Users\g12n1260\AppData\Local\Microsoft\VisualStudio\14.0Exp\Extensions\Company\ShowMeTheDiff\1.0\\ShowMeTheDiff.pdb
+C:\Users\g12n1260\AppData\Local\Microsoft\VisualStudio\14.0Exp\Extensions\Company\ShowMeTheDiff\1.0\\ShowMeTheDiff.pkgdef
+C:\Users\g12n1260\AppData\Local\Microsoft\VisualStudio\14.0Exp\Extensions\Company\ShowMeTheDiff\1.0\\extension.vsixmanifest

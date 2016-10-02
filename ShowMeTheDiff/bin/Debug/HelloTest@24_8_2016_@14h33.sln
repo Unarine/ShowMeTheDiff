@@ -1,0 +1,22 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HelloTest
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string path = "hey//lol//l";
+            string[] lol = path.Split('/');
+            for (int i = 0; i < lol.Length; i++)
+            {
+                Console.WriteLine(lol[i]);
+            }
+            Console.ReadLine();
+        }
+    }
+}
