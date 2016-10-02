@@ -138,6 +138,7 @@ namespace ShowMeTheDiff
             var screengrab = GetAllText(viewhost); //grab screen host
             
             var sP = position; // startPosition
+            if (screengrab[sP] == '\r') sP--; //if the user clicked at the very end of the line
             while (sP > 0 && screengrab[sP] != '\r' && screengrab[sP] != '\n') sP--;
             var eP = position; // endPosition
             while (eP < screengrab.Length - 1 && screengrab[eP] != '\r' && screengrab[eP] != '\n') eP++;
