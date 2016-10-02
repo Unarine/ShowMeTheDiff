@@ -16,6 +16,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Editor;
 using System.IO;
+using System.Text;
 
 namespace ShowMeTheDiff
 {
@@ -146,8 +147,10 @@ namespace ShowMeTheDiff
             string toWriteinto = FName[0] + "@" + date.Day + "_" + date.Month + "_" + date.Year + "_" + "@" + date.Hour + "h" + date.Minute + "." + FName[1] ;
             
 
-            TextWriter txtResult = File.CreateText(directory+ toWriteinto);
-            
+            //TextWriter txtResult = File.CreateText(directory+ toWriteinto);
+            TextWriter txtResult = new StreamWriter(directory + toWriteinto, true, Encoding.UTF8);
+            //TextWriter txt =  new StreamWriter(directory + toWriteinto, Encoding.UTF8);
+            //txtResult.Encoding.Equals(Encoding.UTF8);
             txtResult.Write(screengrab);
             txtResult.Close();
 
@@ -167,7 +170,7 @@ namespace ShowMeTheDiff
             WorkingFile = filename;
 
             dte.ExecuteCommand("Tools.Difffiles", $"{file1} {file2}");
-
+            
 
 
         }
