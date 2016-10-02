@@ -146,17 +146,11 @@ namespace ShowMeTheDiff
 
             string toWriteinto = FName[0] + "@" + date.Day + "_" + date.Month + "_" + date.Year + "_" + "@" + date.Hour + "h" + date.Minute + "." + FName[1] ;
             
-
-            //TextWriter txtResult = File.CreateText(directory+ toWriteinto);
+            //save the file and change the encoding 
             TextWriter txtResult = new StreamWriter(directory + toWriteinto, true, Encoding.UTF8);
-            //TextWriter txt =  new StreamWriter(directory + toWriteinto, Encoding.UTF8);
-            //txtResult.Encoding.Equals(Encoding.UTF8);
             txtResult.Write(screengrab);
             txtResult.Close();
 
-            
-            
-            //string file2 = "\"" + directory+ toWriteinto + "\"";
 
             string file1, file2;
             var dialog = new OpenFileDialog();
@@ -167,6 +161,7 @@ namespace ShowMeTheDiff
             file2 = "\"" + filename + "\"";
 
             // store this filename as something that UseThisLineInstead can use.
+
             WorkingFile = filename;
 
             dte.ExecuteCommand("Tools.Difffiles", $"{file1} {file2}");

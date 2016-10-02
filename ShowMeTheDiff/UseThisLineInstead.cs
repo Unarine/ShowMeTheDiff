@@ -133,6 +133,42 @@ namespace ShowMeTheDiff
             var viewhost = GetCurrentViewHost();
             var line = viewhost.TextView.Caret.ContainingTextViewLine.Extent.GetText();
             var position = viewhost.TextView.Caret.Position.BufferPosition.Position;
+            
+
+            var screengrab = GetAllText(viewhost); //grab screen host
+            
+            var sP = position; // startPosition
+            while (sP > 0 && screengrab[sP] != '\r' && screengrab[sP] != '\n') sP--;
+            var eP = position; // endPosition
+            while (eP < screengrab.Length - 1 && screengrab[eP] != '\r' && screengrab[eP] != '\n') eP++;
+            var myline = screengrab.Substring(sP - 1 , eP - sP +1); //the length of it should be start position - end position
+            
+            var fn = ShowMeTheDiff.Instance.WorkingFile;
+            var everything = System.IO.File.ReadAllText(fn);
+            
+
+            var newLines = "";
+            //int counterMyLine = 0;
+            //everything[position] = "s";
+            //for (int i = sP; i < eP; i++) {
+            //everything[i] = myline[counterMyLine];
+            //}
+
+            var sP1 = sP;
+            var eP1 = eP;
+            while (sP1 > 0 && everything[sP1] != '\r' && everything[sP1] != '\n') sP1--;
+            while (eP1 < everything.Length - 1 && everything[eP1] != '\r' && everything[eP1] != '\n') eP1++;
+
+
+            newLines += everything.Substring(0, sP1-1);//, everything.Length-eP+1
+            newLines +=  myline;
+            newLines += everything.Substring(eP1);
+
+            System.IO.File.WriteAllText(fn, newLines);
+            //var lol = everything[position];
+            //var lines = System.IO.File.ReadAllLines(fn);
+            //lines[12] = "lol yas";
+
 
 
             //TextExtent extent = new TextExtent();
@@ -156,6 +192,7 @@ namespace ShowMeTheDiff
                 OLEMSGICON.OLEMSGICON_INFO,
                 OLEMSGBUTTON.OLEMSGBUTTON_OK,
                 OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST); */
+
         }
     }
 }
