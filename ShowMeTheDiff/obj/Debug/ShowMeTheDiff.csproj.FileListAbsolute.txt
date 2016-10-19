@@ -150,3 +150,13 @@ C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\Sho
 C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\obj\Debug\ShowMeTheDiff.pkgdef
 C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\obj\Debug\ShowMeTheDiff.latest.pkgdef
 C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\obj\Debug\extension.vsixmanifest
+C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\bin\Debug\ShowMeTheDiff.dll.config
+C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\bin\Debug\EntityFramework.dll
+C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\bin\Debug\System.Data.SQLite.dll
+C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\bin\Debug\System.Data.SQLite.EF6.dll
+C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\bin\Debug\System.Data.SQLite.Linq.dll
+C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\bin\Debug\EntityFramework.xml
+C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\bin\Debug\System.Data.SQLite.xml
+C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\obj\Debug\ShowMeTheDiff.g.resources

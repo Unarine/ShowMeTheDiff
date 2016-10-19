@@ -514,7 +514,7 @@ namespace my.utils {
 			
     /// <summary>Buffer of numbers that will be compared.</summary>
     internal int[] data;
-
+        
     /// <summary>
     /// Array of booleans that flag for modified data.
     /// This is the result of the diff.

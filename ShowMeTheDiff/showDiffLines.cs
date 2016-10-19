@@ -10,6 +10,11 @@ using System.Globalization;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using my.utils;
+using System.Reflection;
+using System.IO;
+using System.Linq;
+using System.Data.SQLite;
+using System.Windows.Forms;
 
 namespace ShowMeTheDiff
 {
@@ -95,11 +100,11 @@ namespace ShowMeTheDiff
         private void MenuItemCallback(object sender, EventArgs e)
         {
             //Diff.Item [] hey = Diff.DiffText("heasdfy", "hey", false, false, false);
-
+            setUpDatabase();
             MainLines main = new MainLines();
             main.Show();
 
-            setUpDatabase();
+            
 
            /* string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
             string title = "showDiffLines";
@@ -116,7 +121,53 @@ namespace ShowMeTheDiff
 
         private void setUpDatabase()
         {
-            throw new NotImplementedException();
+            databaseHouseKeeping();
+            //throw new NotImplementedException();
+            
+            var basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            SQLiteConnection connMakeDB = new SQLiteConnection(Path.Combine(basePath, "TimeMachineDB.sqlite"));
+            SQLiteConnection conn = new SQLiteConnection("Data Source = TimeMachineDB.sqlite; Version = 3");
+            conn.Open();
+
+            createTables(conn);
+
+            conn.Close();
+        }
+
+        private void createTables(SQLiteConnection conn)
+        {
+            string TableLine = "CREATE TABLE IF NOT EXISTS Line (  line_ID INTEGER PRIMARY KEY AUTOINCREMENT, line_Text TEXT, Line_Number INT,  line_Date DATETIME );";
+            string TableLineVersions = "CREATE TABLE IF NOT EXISTS Version ( version_ID INTEGER PRIMARY KEY AUTOINCREMENT, line_id VARCHAR(255) REFERENCES Line(line_ID), version_Text TEXT,  version_Date DATETIME ,  version_LineNumber INT); ";
+            string sql = string.Format("{0} {1}", TableLine, TableLineVersions);
+            SQLiteCommand cmnd = new SQLiteCommand(sql, conn);
+            try { cmnd.ExecuteNonQuery(); } catch (Exception e) { MessageBox.Show(e.ToString()); }
+        }
+
+        private void databaseHouseKeeping()
+        {
+            Assembly asm = Assembly.GetExecutingAssembly();
+            var localPath = Path.GetDirectoryName(asm.Location);
+
+            if (!Directory.Exists(Path.Combine(localPath, "x86"))) {
+                var arch32 = asm.GetManifestResourceNames().First(x => x.Contains("32SQLite"));
+                var file32 = asm.GetManifestResourceStream(arch32);
+                var buf32 = new byte[file32.Length];
+                file32.Read(buf32, 0, buf32.Length);
+                Directory.CreateDirectory(Path.Combine(localPath, "x86"));                
+                File.WriteAllBytes(Path.Combine(localPath, "x86", "SQLite.Interop.dll"), buf32);
+            }
+
+            if (!Directory.Exists(Path.Combine(localPath, "x64")))
+            {
+                var arch64 = asm.GetManifestResourceNames().First(x => x.Contains("64SQLite"));
+                var file64 = asm.GetManifestResourceStream(arch64);
+                var buf64 = new byte[file64.Length];
+                file64.Read(buf64, 0, buf64.Length);
+
+                Directory.CreateDirectory(Path.Combine(localPath, "x64"));
+                File.WriteAllBytes(Path.Combine(localPath, "x64", "SQLite.Interop.dll"), buf64); 
+            }
+
         }
     }
 }
