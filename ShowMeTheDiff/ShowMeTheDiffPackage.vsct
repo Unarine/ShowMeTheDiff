@@ -42,6 +42,9 @@
       <Group guid="guidShowMeTheDiffPackageCmdSet1" id="MyMenuGroup" priority="0x0100">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN" />
       </Group> 
+      <Group guid="guidShowMeTheDiffPackageCmdSet2" id="MyMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
+      </Group>
     </Groups>
 
     <!--Buttons section. -->
@@ -69,6 +72,13 @@
           <ButtonText>Invoke UseThisLineInstead</ButtonText>
         </Strings>
       </Button>
+      <Button guid="guidShowMeTheDiffPackageCmdSet2" id="cmdidshowDiffLines" priority="0x0100" type="Button">
+        <Parent guid="guidShowMeTheDiffPackageCmdSet2" id="MyMenuGroup" />
+        <Icon guid="guidImages2" id="bmpPic1" />
+        <Strings>
+          <ButtonText>Invoke showDiffLines</ButtonText>
+        </Strings>
+      </Button>
     </Buttons>
 
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
@@ -80,6 +90,7 @@
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
       <Bitmap guid="guidImages" href="Resources\ShowMeTheDiff.png" usedList="bmpPic1" />
       <Bitmap guid="guidImages1" href="Resources\UseThisLineInstead.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
+      <Bitmap guid="guidImages2" href="Resources\showDiffLines.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
     </Bitmaps>
   </Commands>
 
@@ -104,6 +115,20 @@
     </GuidSymbol>
   
     <GuidSymbol value="{1589c9ea-09bf-4dbf-978e-c8e9b7bf65da}" name="guidImages1">
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{7b76ce58-4e97-4537-9b53-b2ab093ee2d2}" name="guidShowMeTheDiffPackageCmdSet2">
+      <IDSymbol value="4128" name="MyMenuGroup" />
+      <IDSymbol value="256" name="cmdidshowDiffLines" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{7cdc2fc3-0a3b-4f3a-a0d1-aa104d807395}" name="guidImages2">
       <IDSymbol name="bmpPic1" value="1" />
       <IDSymbol name="bmpPic2" value="2" />
       <IDSymbol name="bmpPicSearch" value="3" />

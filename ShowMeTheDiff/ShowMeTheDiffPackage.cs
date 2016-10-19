@@ -69,6 +69,7 @@ namespace ShowMeTheDiff
             ShowMeTheDiff.Initialize(this);
             base.Initialize();
             UseThisLineInstead.Initialize(this);
+            showDiffLines.Initialize(this);
         }
 
         #endregion
