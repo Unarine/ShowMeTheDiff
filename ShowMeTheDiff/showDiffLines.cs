@@ -155,7 +155,7 @@ namespace ShowMeTheDiff
             MainLines main = new MainLines(curLine, MyVSPackagePackage.SqlConnection );
             main.Show();
             
-            //handleLines(screengrab);
+            handleLines(screengrab);
             
 
            /* string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
