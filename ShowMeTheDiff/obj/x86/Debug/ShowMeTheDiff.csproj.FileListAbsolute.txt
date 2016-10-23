@@ -83,3 +83,5 @@ C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\Sho
 C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\obj\x86\Debug\ShowMeTheDiff.latest.pkgdef
 C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\obj\x86\Debug\extension.vsixmanifest
 C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\obj\x86\Debug\ShowMeTheDiff.csprojResolveAssemblyReference.cache
+C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\obj\x86\Debug\ShowMeTheDiff.MainLines.resources
+C:\Users\g12n1260\Documents\Visual Studio 2015\Projects\GitHub\ShowMeTheDiff\ShowMeTheDiff\obj\x86\Debug\ShowMeTheDiff.MoreLineDetails.resources

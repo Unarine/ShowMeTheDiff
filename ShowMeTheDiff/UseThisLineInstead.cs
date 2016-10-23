@@ -92,29 +92,7 @@ namespace ShowMeTheDiff
         }
 
 
-        private IWpfTextViewHost GetCurrentViewHost()
-        {
-            var textManager = this.ServiceProvider.GetService(typeof(SVsTextManager)) as IVsTextManager;
-            IVsTextView textView = null;
-            int mustHaveFocus = 1;
-            textManager.GetActiveView(mustHaveFocus, null, out textView);
-
-            var userData = textView as IVsUserData;
-            if (userData == null)
-            {
-                return null;
-            }
-            else
-            {
-                Guid guidViewHost = DefGuidList.guidIWpfTextViewHost;
-                object holder;
-                userData.GetData(ref guidViewHost, out holder);
-                var viewHost = (IWpfTextViewHost)holder;
-                return viewHost;
-            }
-
-        }
-
+        
 
         private string GetAllText(IWpfTextViewHost viewHost) =>
            // viewHost.TextView.Caret.ContainingTextViewLine;
@@ -130,7 +108,8 @@ namespace ShowMeTheDiff
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            var viewhost = GetCurrentViewHost();
+
+            var viewhost = ShowMeTheDiff.Instance.currentView;//GetCurrentViewHost();
             var line = viewhost.TextView.Caret.ContainingTextViewLine.Extent.GetText();
             var position = viewhost.TextView.Caret.Position.BufferPosition.Position;
             
@@ -154,6 +133,10 @@ namespace ShowMeTheDiff
             //for (int i = sP; i < eP; i++) {
             //everything[i] = myline[counterMyLine];
             //}
+
+
+
+
 
             var sP1 = sP;
             var eP1 = eP;

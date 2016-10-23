@@ -90,6 +90,7 @@ namespace ShowMeTheDiff
         public static void Initialize(Package package)
         {
             Instance = new ShowMeTheDiff(package);
+            
         }
 
         private IWpfTextViewHost GetCurrentViewHost() {
@@ -108,6 +109,7 @@ namespace ShowMeTheDiff
                 object holder;
                 userData.GetData(ref guidViewHost, out holder);
                 var viewHost = (IWpfTextViewHost)holder;
+                
                 return viewHost;
             }
 
@@ -116,6 +118,8 @@ namespace ShowMeTheDiff
 
         private string GetAllText(IWpfTextViewHost viewHost) =>
             viewHost.TextView.TextSnapshot.GetText();
+
+
 
 
         /// <summary>
@@ -127,10 +131,12 @@ namespace ShowMeTheDiff
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-
+            
             var viewhost = GetCurrentViewHost();
             var screengrab = GetAllText(viewhost);
-           
+            currentView = viewhost;
+           // var warrisdis = screengrab.Split('\n');
+            
             var dte = (DTE2)ServiceProvider.GetService(typeof(DTE));
             var lol = dte.MainWindow.Document;
             
@@ -171,5 +177,8 @@ namespace ShowMeTheDiff
         }
 
         public string WorkingFile { get; private set; }
+        public IWpfTextViewHost currentView { get; private set; }
+
+
     }
 }
