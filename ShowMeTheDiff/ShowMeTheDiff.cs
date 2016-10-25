@@ -153,7 +153,8 @@ namespace ShowMeTheDiff
             string toWriteinto = FName[0] + "@" + date.Day + "_" + date.Month + "_" + date.Year + "_" + "@" + date.Hour + "h" + date.Minute + "." + FName[1] ;
             
             //save the file and change the encoding 
-            TextWriter txtResult = new StreamWriter(directory + toWriteinto, true, Encoding.UTF8);
+            //TextWriter txtResult = new StreamWriter(directory + toWriteinto, true, Encoding.UTF8);
+            TextWriter txtResult = new StreamWriter(directory + toWriteinto);
             txtResult.Write(screengrab);
             txtResult.Close();
 

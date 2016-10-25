@@ -82,9 +82,9 @@ namespace ShowMeTheDiff
         /// where you can put all the initialization code that rely on services provided by VisualStudio.
         /// </summary>
         protected override void Initialize()
-        {
+        {   base.Initialize();
             ShowMeTheDiff.Initialize(this);
-            base.Initialize();
+            
             UseThisLineInstead.Initialize(this);
             showDiffLines.Initialize(this);
         }
@@ -95,10 +95,7 @@ namespace ShowMeTheDiff
 
     }
 
-    //[ProvideAutoLoad(VSConstants.UICONTEXT.NoSolution_string)]
-    //[ProvideAutoLoad(VSConstants.UICONTEXT.CSharpProject_string)]
-    //[ProvideAutoLoad(VSConstants.UICONTEXT.SolutionBuilding_string)]
-    //[ProvideAutoLoad(VSConstants.UICONTEXT.DesignMode_string)]
+
     [ProvideAutoLoad(VSConstants.UICONTEXT.SolutionExistsAndFullyLoaded_string)]
     //[ProvideAutoLoad(VSConstants.UICONTEXT.SolutionOpening_string)]
     [Guid(MyVSPackagePackage.guidMyVSPackagePkgString)]
@@ -109,12 +106,8 @@ namespace ShowMeTheDiff
 
 
         
-        //public const string guidMyVSPackagePkgString = "ADFC4E64-0397-11D1-9F4E-00A0C911004F";
-        //public const string guidMyVSPackagePkgString = "FAE04EC1-301F-11D3-BF48-00C04F79EFBC";
-        // public const string guidMyVSPackagePkgString = "ADFC4E60-0397-11D1-0F4E-00A0C911004F";
-        //public const string guidMyVSPackagePkgString = "ADFC4E63-0397-11D1-9F4E-00A0C911004F";
+
         public const string guidMyVSPackagePkgString = "10534154-102D-46E2-ABA8-A6BFA25BA0BE";
-        //public const string guidMyVSPackagePkgString = "D2567162-F94F-4091-8798-A096E61B8B50";
         private string GetAllText(IWpfTextViewHost viewHost) =>
             viewHost.TextView.TextSnapshot.GetText();
 
@@ -126,11 +119,10 @@ namespace ShowMeTheDiff
         protected override void Initialize()
         {
             base.Initialize();
-            ShowSolutionProperties();
 
-            
-        
-    }
+            ShowSolutionProperties();
+           
+        }
 
         private void setUpDatabase()
         {
@@ -146,13 +138,7 @@ namespace ShowMeTheDiff
             var localPath = Path.GetDirectoryName(asm.Location);
 
             createTables(conn);
-            //var d = Path.Combine(localPath, basePath);
-
-            //TextWriter bx = File.CreateText(Path.Combine(localPath, "basefile.txt"));
-            //bx.Write("hello");
-            //bx.Close();
             conn.Close();
-            
 
         }
 
@@ -160,8 +146,16 @@ namespace ShowMeTheDiff
 
         private void createTables(SQLiteConnection conn)
         {
-            string TableLine = "CREATE TABLE IF NOT EXISTS Line (  line_ID INTEGER PRIMARY KEY AUTOINCREMENT, line_Text TEXT, Line_Number INT, line_Comment TEXT,  line_Date DATETIME );";
-            string TableLineVersions = "CREATE TABLE IF NOT EXISTS Version ( version_ID INTEGER PRIMARY KEY AUTOINCREMENT, line_id INTEGER REFERENCES Line(line_ID), version_Text TEXT,   version_LineNumber INT, version_Comment, version_Date DATETIME ); ";
+            string drop = "Drop table Version;";
+            SQLiteCommand cmnd1 = new SQLiteCommand(drop, conn);
+            try { cmnd1.ExecuteNonQuery(); } catch (Exception e) { MessageBox.Show(e.ToString()); }
+
+             drop = "Drop table Line;";
+             cmnd1 = new SQLiteCommand(drop, conn);
+            try { cmnd1.ExecuteNonQuery(); } catch (Exception e) { MessageBox.Show(e.ToString()); }
+
+            string TableLine = "CREATE TABLE IF NOT EXISTS Line (  line_ID INTEGER PRIMARY KEY AUTOINCREMENT, line_Text TEXT, Line_Number INT, line_Comment TEXT,  line_Date datetime  DEFAULT (datetime('now','localtime')) );";
+            string TableLineVersions = "CREATE TABLE IF NOT EXISTS Version ( version_ID INTEGER PRIMARY KEY AUTOINCREMENT, line_id INTEGER REFERENCES Line(line_ID), version_Text TEXT,  version_Comment, version_Date datetime DEFAULT (datetime('now','localtime')) ); ";
             string sql = string.Format("{0} {1}", TableLine, TableLineVersions);
             SQLiteCommand cmnd = new SQLiteCommand(sql, conn);
             try { cmnd.ExecuteNonQuery(); } catch (Exception e) { MessageBox.Show(e.ToString()); }
@@ -212,6 +206,7 @@ namespace ShowMeTheDiff
 
             isSolutionOpen = GetPropertyValue<bool>(solutionInterface, __VSPROPID.VSPROPID_IsSolutionOpen);
 
+
             if (isSolutionOpen)
             {
                 solutionDirectory = GetPropertyValue<string>(solutionInterface, __VSPROPID.VSPROPID_SolutionDirectory);
@@ -237,20 +232,23 @@ namespace ShowMeTheDiff
                     }
                     baseFF = baseFile;
                     baseFile.Close();
-                    sql = "DELETE FROM Line";
-
                     SqlConnection.Open();
+                    sql = "DELETE FROM Version";
+
+                    
                     SQLiteCommand cmd1 = new SQLiteCommand(sql, SqlConnection);
                     try { cmd1.ExecuteNonQuery(); } catch (Exception e) { MessageBox.Show(e.ToString()); }
 
-                    sql = "DELETE FROM Version";
+                    sql = "DELETE FROM Line";
 
 
                     SQLiteCommand cmd2 = new SQLiteCommand(sql, SqlConnection);
                     try { cmd1.ExecuteNonQuery(); } catch (Exception e) { MessageBox.Show(e.ToString()); }
+
+
                     for (int i = 0; i < lines.Length; i++)
                     {
-                        sql = string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
+                        sql = string.Format("INSERT INTO LINE (line_Text, Line_Number ) VALUES ( '{0}' , {1} )  ", lines[i], i);
                         SQLiteCommand cmnd = new SQLiteCommand(sql, SqlConnection);
                         try { cmnd.ExecuteNonQuery(); } catch (Exception e) { MessageBox.Show(e.ToString()); }
                     }

@@ -16,6 +16,7 @@ using EnvDTE80;
 using EnvDTE;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Text;
+using System.Windows.Forms;
 
 namespace ShowMeTheDiff
 {
@@ -60,6 +61,8 @@ namespace ShowMeTheDiff
                 var menuItem = new MenuCommand(this.MenuItemCallback, menuCommandID);
                 commandService.AddCommand(menuItem);
             }
+
+            
         }
 
         /// <summary>
@@ -92,7 +95,34 @@ namespace ShowMeTheDiff
         }
 
 
-        
+
+
+        private IWpfTextViewHost GetCurrentViewHost()
+        {
+            var textManager = this.ServiceProvider.GetService(typeof(SVsTextManager)) as IVsTextManager;
+            IVsTextView textView = null;
+            int mustHaveFocus = 1;
+            textManager.GetActiveView(mustHaveFocus, null, out textView);
+
+            var userData = textView as IVsUserData;
+            if (userData == null)
+            {
+                return null;
+            }
+            else
+            {
+                Guid guidViewHost = DefGuidList.guidIWpfTextViewHost;
+                object holder;
+                userData.GetData(ref guidViewHost, out holder);
+                var viewHost = (IWpfTextViewHost)holder;
+
+                return viewHost;
+            }
+
+        }
+
+
+
 
         private string GetAllText(IWpfTextViewHost viewHost) =>
            // viewHost.TextView.Caret.ContainingTextViewLine;
@@ -108,8 +138,9 @@ namespace ShowMeTheDiff
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-
-            var viewhost = ShowMeTheDiff.Instance.currentView;//GetCurrentViewHost();
+            
+            
+            var viewhost = GetCurrentViewHost();
             var line = viewhost.TextView.Caret.ContainingTextViewLine.Extent.GetText();
             var position = viewhost.TextView.Caret.Position.BufferPosition.Position;
             
@@ -136,8 +167,6 @@ namespace ShowMeTheDiff
 
 
 
-
-
             var sP1 = sP;
             var eP1 = eP;
             while (sP1 > 0 && everything[sP1] != '\r' && everything[sP1] != '\n') sP1--;
@@ -149,11 +178,12 @@ namespace ShowMeTheDiff
             newLines += everything.Substring(eP1);
 
             System.IO.File.WriteAllText(fn, newLines);
+            
             //var lol = everything[position];
             //var lines = System.IO.File.ReadAllLines(fn);
             //lines[12] = "lol yas";
 
-
+            
 
             //TextExtent extent = new TextExtent();
             //SnapshotSpan range = new SnapshotSpan() ;

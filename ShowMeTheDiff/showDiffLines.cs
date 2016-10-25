@@ -19,6 +19,8 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Editor;
 using System.Collections.Generic;
+using EnvDTE80;
+using EnvDTE;
 
 namespace ShowMeTheDiff
 {
@@ -123,6 +125,8 @@ namespace ShowMeTheDiff
         private static string GetAllText(IWpfTextViewHost viewHost) =>
         viewHost.TextView.TextSnapshot.GetText();
 
+        int curLine;
+
         /// <summary>
         /// This function is the callback used to execute the command when the menu item is clicked.
         /// See the constructor to see how the menu item is associated with this function using
@@ -138,7 +142,7 @@ namespace ShowMeTheDiff
             var screengrab = GetAllText(viewhost);
 
             //work out which line was clicked on
-            int curLine = 0;
+            curLine = 0;
 
             var sP = 0; // startPosition the begiinging
             while (sP < position) {
@@ -150,25 +154,12 @@ namespace ShowMeTheDiff
             }
 
 
-            
-            //Diff.Item [] hey = Diff.DiffText("heasdfy", "hey", false, false, false);
-            MainLines main = new MainLines(curLine, MyVSPackagePackage.SqlConnection );
-            main.Show();
+
+
             
             handleLines(screengrab);
             
 
-           /* string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            string title = "showDiffLines";
-
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.ServiceProvider,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST); */
         }
 
 
@@ -180,6 +171,12 @@ namespace ShowMeTheDiff
             //var viewhost = showDiffLines.Instance.currentView;
 
             var Currentlines = screengrab.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+
+            var dte = (DTE2)ServiceProvider.GetService(typeof(DTE));
+          
+
+            string filename = dte.ActiveDocument.FullName;
+            currentFile = filename;
 
             //for (int i = 0; i < Currentlines.Length; i++) {
             //    Currentlines[i] = Currentlines[i].Substring(0, Currentlines[i].Length - 1);
@@ -210,7 +207,7 @@ namespace ShowMeTheDiff
                         //sql = string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
                         while (reader.Read())
                         {
-                            sql = string.Format("INSERT INTO VERSION  (line_id, version_Text, version_LineNumber,version_Date ) VALUES ({0}, '{1}',{2},  CURRENT_TIMESTAMP)", reader["line_ID"], Currentlines[i], i);
+                            sql = string.Format("INSERT INTO VERSION  (line_id, version_Text ) VALUES ({0}, '{1}')", reader["line_ID"], Currentlines[i]);
                             SQLiteCommand cmnd1 = new SQLiteCommand(sql, conn);
                             try { cmnd1.ExecuteNonQuery(); } catch (Exception er) { MessageBox.Show(er.ToString()); }
                         }
@@ -219,6 +216,9 @@ namespace ShowMeTheDiff
 
                 }
                 conn.Close();
+                MainLines main = new MainLines(curLine, MyVSPackagePackage.SqlConnection);
+                main.Width=400;
+                main.Show();
             }
             //lines have been added
             else if (BasefileLines.Length < Currentlines.Length)
@@ -239,7 +239,7 @@ namespace ShowMeTheDiff
                         //sql = string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
                         while (reader.Read())
                         {
-                            sql = string.Format("INSERT INTO VERSION  (line_id, version_Text, version_LineNumber,version_Date ) VALUES ({0}, '{1}',{2},  CURRENT_TIMESTAMP)", reader["line_ID"], Currentlines[i], i);
+                            sql = string.Format("INSERT INTO VERSION  (line_id, version_Text ) VALUES ({0}, '{1}')", reader["line_ID"], Currentlines[i], i);
                             SQLiteCommand cmnd1 = new SQLiteCommand(sql, conn);
                             try { cmnd1.ExecuteNonQuery(); } catch (Exception er) { MessageBox.Show(er.ToString()); }
                         }
@@ -249,14 +249,16 @@ namespace ShowMeTheDiff
                 }
                 for (int i = BasefileLines.Length - 1; i < Currentlines.Length; i++)
                 {
-                    string sql = string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", Currentlines[i], i);
+                    string sql = string.Format("INSERT INTO LINE (line_Text, Line_Number ) VALUES ( '{0}' , {1})  ", Currentlines[i], i);
                     SQLiteCommand cmnd = new SQLiteCommand(sql, conn);
                     try { cmnd.ExecuteNonQuery(); } catch (Exception en) { MessageBox.Show(en.ToString()); }
 
                 }
                 //add the newLines to the Lines into the database
                 conn.Close();
-
+                MainLines main = new MainLines(curLine, MyVSPackagePackage.SqlConnection);
+                
+                main.Show();
             }
             //else lines have been deleted
             else
@@ -277,7 +279,7 @@ namespace ShowMeTheDiff
                         //sql = string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
                         while (reader.Read())
                         {
-                            sql = string.Format("INSERT INTO VERSION  (line_id, version_Text, version_LineNumber,version_Date ) VALUES ({0}, '{1}',{2},  CURRENT_TIMESTAMP)", reader["line_ID"], Currentlines[i], i);
+                            sql = string.Format("INSERT INTO VERSION  (line_id, version_Text) VALUES ({0}, '{1}')", reader["line_ID"], Currentlines[i]);
                             SQLiteCommand cmnd1 = new SQLiteCommand(sql, conn);
                             try { cmnd1.ExecuteNonQuery(); } catch (Exception er) { MessageBox.Show(er.ToString()); }
                         }
@@ -299,7 +301,7 @@ namespace ShowMeTheDiff
                     //sql = string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
                     while (reader.Read())
                     {
-                        sql = string.Format("INSERT INTO VERSION  (line_id, version_Text, version_LineNumber,version_Date ) VALUES ({0}, '{1}',{2},  CURRENT_TIMESTAMP)", reader["line_ID"], " ", i);
+                        sql = string.Format("INSERT INTO VERSION  (line_id, version_Text) VALUES ({0}, '{1}')", reader["line_ID"], " ");
                         SQLiteCommand cmnd1 = new SQLiteCommand(sql, conn);
                         try { cmnd1.ExecuteNonQuery(); } catch (Exception er) { MessageBox.Show(er.ToString()); }
                     }
@@ -308,10 +310,12 @@ namespace ShowMeTheDiff
                 }
                 //insert nulls for the remainder
                 conn.Close();
+                MainLines main = new MainLines(curLine, MyVSPackagePackage.SqlConnection);
+                main.Show();
             } //else
         }
 
-        public IWpfTextViewHost currentView { get; private set; }
+        public string currentFile { get; private set; }
         
 
 
