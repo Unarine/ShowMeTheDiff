@@ -95,35 +95,27 @@ namespace ShowMeTheDiff
 
     }
 
-
+    //package to intiialise database and basefile when the solution exists and is fully loaded
     [ProvideAutoLoad(VSConstants.UICONTEXT.SolutionExistsAndFullyLoaded_string)]
-    //[ProvideAutoLoad(VSConstants.UICONTEXT.SolutionOpening_string)]
     [Guid(MyVSPackagePackage.guidMyVSPackagePkgString)]
     public sealed class MyVSPackagePackage : Package
     {
 
-
-
-
-        
-
         public const string guidMyVSPackagePkgString = "10534154-102D-46E2-ABA8-A6BFA25BA0BE";
         private string GetAllText(IWpfTextViewHost viewHost) =>
             viewHost.TextView.TextSnapshot.GetText();
-
+        //constructor
         public MyVSPackagePackage()
-        {
-            
+        {   
         }
 
         protected override void Initialize()
         {
             base.Initialize();
-
             ShowSolutionProperties();
            
         }
-
+        //sort out setting up the database
         private void setUpDatabase()
         {
             databaseHouseKeeping();
@@ -142,18 +134,19 @@ namespace ShowMeTheDiff
 
         }
 
-  
 
+        //Create the Line and Verison tables
         private void createTables(SQLiteConnection conn)
         {
+            //make sure no pre-existing records exist
             string drop = "Drop table Version;";
             SQLiteCommand cmnd1 = new SQLiteCommand(drop, conn);
             try { cmnd1.ExecuteNonQuery(); } catch (Exception e) { MessageBox.Show(e.ToString()); }
 
-             drop = "Drop table Line;";
-             cmnd1 = new SQLiteCommand(drop, conn);
+            drop = "Drop table Line;";
+            cmnd1 = new SQLiteCommand(drop, conn);
             try { cmnd1.ExecuteNonQuery(); } catch (Exception e) { MessageBox.Show(e.ToString()); }
-
+            
             string TableLine = "CREATE TABLE IF NOT EXISTS Line (  line_ID INTEGER PRIMARY KEY AUTOINCREMENT, line_Text TEXT, Line_Number INT, line_Comment TEXT,  line_Date datetime  DEFAULT (datetime('now','localtime')) );";
             string TableLineVersions = "CREATE TABLE IF NOT EXISTS Version ( version_ID INTEGER PRIMARY KEY AUTOINCREMENT, line_id INTEGER REFERENCES Line(line_ID), version_Text TEXT,  version_Comment, version_Date datetime DEFAULT (datetime('now','localtime')) ); ";
             string sql = string.Format("{0} {1}", TableLine, TableLineVersions);
@@ -161,8 +154,9 @@ namespace ShowMeTheDiff
             try { cmnd.ExecuteNonQuery(); } catch (Exception e) { MessageBox.Show(e.ToString()); }
         }
 
+        //make sure Visual Studio can communicate with SQLite
         private void databaseHouseKeeping()
-        {
+        {   
             Assembly asm = Assembly.GetExecutingAssembly();
             var localPath = Path.GetDirectoryName(asm.Location);
 
@@ -197,7 +191,7 @@ namespace ShowMeTheDiff
             
 
             // Get the Solution service
-            solutionService = (SVsSolution)this.GetService(typeof(SVsSolution));
+            solutionService = (SVsSolution)GetService(typeof(SVsSolution));
 
             // Get the Solution interface of the Solution service
             solutionInterface = solutionService as IVsSolution;
@@ -206,12 +200,11 @@ namespace ShowMeTheDiff
 
             isSolutionOpen = GetPropertyValue<bool>(solutionInterface, __VSPROPID.VSPROPID_IsSolutionOpen);
 
-
+            //wait till solution is open
             if (isSolutionOpen)
             {
+                //Get location to put the basefile
                 solutionDirectory = GetPropertyValue<string>(solutionInterface, __VSPROPID.VSPROPID_SolutionDirectory);
-
-
                 var thiss = solutionDirectory.Split('\\');
                 var path = Path.Combine(solutionDirectory, thiss[thiss.Length - 2]) ;
                 var placeToStore = "bin\\Debug";
@@ -219,32 +212,20 @@ namespace ShowMeTheDiff
                 var baseF = @"baseFile.txt";
                 var PathB = Path.Combine(path, placeToStore, baseF);
                 pathToFile = PathB;
-                //var lines = File.OpenText(path + innitFile);
+
                 string sql;
                 if (!File.Exists(Path.Combine(path, placeToStore, baseF)))
-                {
+                {   //The first time it comes through here so basefile and database needs to be updated
                     TextWriter baseFile = File.CreateText(PathB);
                     setUpDatabase();
-                    var lines = File.ReadAllLines(Path.Combine(path, innitFile));//File.OpenText(Path.Combine(path, innitFile)); 
+                    var lines = File.ReadAllLines(Path.Combine(path, innitFile));
                     foreach (string line in lines)
                     {
                         baseFile.WriteLine(line);
                     }
-                    baseFF = baseFile;
+
                     baseFile.Close();
                     SqlConnection.Open();
-                    sql = "DELETE FROM Version";
-
-                    
-                    SQLiteCommand cmd1 = new SQLiteCommand(sql, SqlConnection);
-                    try { cmd1.ExecuteNonQuery(); } catch (Exception e) { MessageBox.Show(e.ToString()); }
-
-                    sql = "DELETE FROM Line";
-
-
-                    SQLiteCommand cmd2 = new SQLiteCommand(sql, SqlConnection);
-                    try { cmd1.ExecuteNonQuery(); } catch (Exception e) { MessageBox.Show(e.ToString()); }
-
 
                     for (int i = 0; i < lines.Length; i++)
                     {
@@ -256,7 +237,7 @@ namespace ShowMeTheDiff
                     SqlConnection.Close();
                 }
                 else {
-
+                    //else get the basePath and where the database is
                     solutionDirectory = GetPropertyValue<string>(solutionInterface, __VSPROPID.VSPROPID_SolutionDirectory);
 
 
@@ -271,15 +252,10 @@ namespace ShowMeTheDiff
                     databaseHouseKeeping();
 
                     var basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    //SQLiteConnection connMakeDB = new SQLiteConnection(Path.Combine(basePath, "TimeMachineDB.sqlite"));
                     SQLiteConnection conn = new SQLiteConnection("Data Source = TimeMachineDB.sqlite; Version = 3");
                     SqlConnection = conn;
                 }
 
-                /* if (File.Exists()) {
-                     setUpDatabase();
-
-                 }*/
 
             }
         }
@@ -291,7 +267,7 @@ namespace ShowMeTheDiff
             object value = null;
             T result = default(T);
 
-            if (solutionInterface.GetProperty((int)solutionProperty, out value) == Microsoft.VisualStudio.VSConstants.S_OK)
+            if (solutionInterface.GetProperty((int)solutionProperty, out value) == VSConstants.S_OK)
             {
                 result = (T)value;
             }
@@ -301,7 +277,6 @@ namespace ShowMeTheDiff
         public static SQLiteConnection SqlConnection { get; private set; }
         public static string pathToFile { get; private set; }
 
-        public static TextWriter baseFF { get; private set; } 
 
     }
 }

@@ -6,13 +6,9 @@
 
 using System;
 using System.ComponentModel.Design;
-using System.Globalization;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using my.utils;
-using System.Reflection;
 using System.IO;
-using System.Linq;
 using System.Data.SQLite;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.Text.Editor;
@@ -97,7 +93,7 @@ namespace ShowMeTheDiff
         }
 
 
-
+        // Get what is currently on the screen, returns view host
         private IWpfTextViewHost GetCurrentViewHost()
         {
             var textManager = this.ServiceProvider.GetService(typeof(SVsTextManager)) as IVsTextManager;
@@ -122,6 +118,7 @@ namespace ShowMeTheDiff
         }
 
 
+        // Get what is currently on the screen, returns text
         private static string GetAllText(IWpfTextViewHost viewHost) =>
         viewHost.TextView.TextSnapshot.GetText();
 
@@ -152,24 +149,15 @@ namespace ShowMeTheDiff
 
                 sP++;
             }
-
-
-
-
             
-            handleLines(screengrab);
-            
-
+            handleLines(screengrab);  
         }
 
 
-
+        //uses diff.cs class to see if there is a differece in the lines
         private void handleLines(string screengrab)
         {
             
-            
-            //var viewhost = showDiffLines.Instance.currentView;
-
             var Currentlines = screengrab.Split(new string[] { "\r\n" }, StringSplitOptions.None);
 
             var dte = (DTE2)ServiceProvider.GetService(typeof(DTE));
@@ -178,16 +166,13 @@ namespace ShowMeTheDiff
             string filename = dte.ActiveDocument.FullName;
             currentFile = filename;
 
-            //for (int i = 0; i < Currentlines.Length; i++) {
-            //    Currentlines[i] = Currentlines[i].Substring(0, Currentlines[i].Length - 1);
-            //}
+            //read what is in the basefile
             var BasefileLines = File.ReadAllLines(MyVSPackagePackage.pathToFile);
             File.WriteAllLines(MyVSPackagePackage.pathToFile, Currentlines);
             List<string> toWriteBack = new List<string>();
             var conn = MyVSPackagePackage.SqlConnection;
             conn.Open();
-            //File.WriteAllLines(MyVSPackagePackage.pathToFile, )
-            //TextWriter bx = File
+
             //easy case --number of lines are still the same
             if (BasefileLines.Length == Currentlines.Length)
             {
@@ -198,13 +183,8 @@ namespace ShowMeTheDiff
                         string sql = string.Format("SELECT line_ID  FROM Line WHERE Line_Number = {0}", i); //string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
                         SQLiteCommand cmnd = new SQLiteCommand(sql, conn);
 
-                        //try { SQLiteDataReader reader = cmnd.ExecuteReader(); } catch (Exception ee) { MessageBox.Show(ee.ToString()); }
-                        //SQLiteDataReader reader = cmnd.ExecuteReader();
                         SQLiteDataReader reader = cmnd.ExecuteReader();
 
-                        // try { var id = reader["line_ID"]; } catch (Exception eee) { MessageBox.Show(eee.ToString()); }
-                        //( version_ID INTEGER PRIMARY KEY AUTOINCREMENT, line_id INTEGER REFERENCES Line(line_ID), version_Text TEXT,   version_LineNumber INT, version_Comment, version_Date DATETIME );
-                        //sql = string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
                         while (reader.Read())
                         {
                             sql = string.Format("INSERT INTO VERSION  (line_id, version_Text ) VALUES ({0}, '{1}')", reader["line_ID"], Currentlines[i]);
@@ -227,16 +207,11 @@ namespace ShowMeTheDiff
                 {
                     if (Diff.DiffText(BasefileLines[i], Currentlines[i], false, false, false).Length > 0)
                     {
-                        string sql = string.Format("SELECT line_ID  FROM Line WHERE Line_Number = {0}", i); //string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
+                        string sql = string.Format("SELECT line_ID  FROM Line WHERE Line_Number = {0}", i); 
                         SQLiteCommand cmnd = new SQLiteCommand(sql, conn);
 
-                        //try { SQLiteDataReader reader = cmnd.ExecuteReader(); } catch (Exception ee) { MessageBox.Show(ee.ToString()); }
-                        //SQLiteDataReader reader = cmnd.ExecuteReader();
                         SQLiteDataReader reader = cmnd.ExecuteReader();
-
-                        // try { var id = reader["line_ID"]; } catch (Exception eee) { MessageBox.Show(eee.ToString()); }
-                        //( version_ID INTEGER PRIMARY KEY AUTOINCREMENT, line_id INTEGER REFERENCES Line(line_ID), version_Text TEXT,   version_LineNumber INT, version_Comment, version_Date DATETIME );
-                        //sql = string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
+                                                
                         while (reader.Read())
                         {
                             sql = string.Format("INSERT INTO VERSION  (line_id, version_Text ) VALUES ({0}, '{1}')", reader["line_ID"], Currentlines[i], i);
@@ -270,13 +245,8 @@ namespace ShowMeTheDiff
                         string sql = string.Format("SELECT line_ID  FROM Line WHERE Line_Number = {0}", i); //string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
                         SQLiteCommand cmnd = new SQLiteCommand(sql, conn);
 
-                        //try { SQLiteDataReader reader = cmnd.ExecuteReader(); } catch (Exception ee) { MessageBox.Show(ee.ToString()); }
-                        //SQLiteDataReader reader = cmnd.ExecuteReader();
                         SQLiteDataReader reader = cmnd.ExecuteReader();
-
-                        // try { var id = reader["line_ID"]; } catch (Exception eee) { MessageBox.Show(eee.ToString()); }
-                        //( version_ID INTEGER PRIMARY KEY AUTOINCREMENT, line_id INTEGER REFERENCES Line(line_ID), version_Text TEXT,   version_LineNumber INT, version_Comment, version_Date DATETIME );
-                        //sql = string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
+                        //add the lines to the database
                         while (reader.Read())
                         {
                             sql = string.Format("INSERT INTO VERSION  (line_id, version_Text) VALUES ({0}, '{1}')", reader["line_ID"], Currentlines[i]);
@@ -289,16 +259,12 @@ namespace ShowMeTheDiff
 
                 for (int i = Currentlines.Length; i < BasefileLines.Length - 1; i++)
                 {
-                    string sql = string.Format("SELECT line_ID  FROM Line WHERE Line_Number = {0}", i); //string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
+                    string sql = string.Format("SELECT line_ID  FROM Line WHERE Line_Number = {0}", i); 
                     SQLiteCommand cmnd = new SQLiteCommand(sql, conn);
 
-                    //try { SQLiteDataReader reader = cmnd.ExecuteReader(); } catch (Exception ee) { MessageBox.Show(ee.ToString()); }
-                    //SQLiteDataReader reader = cmnd.ExecuteReader();
-                    SQLiteDataReader reader = cmnd.ExecuteReader();
 
-                    // try { var id = reader["line_ID"]; } catch (Exception eee) { MessageBox.Show(eee.ToString()); }
-                    //( version_ID INTEGER PRIMARY KEY AUTOINCREMENT, line_id INTEGER REFERENCES Line(line_ID), version_Text TEXT,   version_LineNumber INT, version_Comment, version_Date DATETIME );
-                    //sql = string.Format("INSERT INTO LINE (line_Text, Line_Number,  line_Date ) VALUES ( '{0}' , {1}  , CURRENT_TIMESTAMP)  ", lines[i], i);
+                    SQLiteDataReader reader = cmnd.ExecuteReader();
+                    //add the lines to the database
                     while (reader.Read())
                     {
                         sql = string.Format("INSERT INTO VERSION  (line_id, version_Text) VALUES ({0}, '{1}')", reader["line_ID"], " ");

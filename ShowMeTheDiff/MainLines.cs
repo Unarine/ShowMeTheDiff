@@ -1,18 +1,10 @@
-﻿using Microsoft.VisualStudio.Text.Editor;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows.Forms;
 using System.Data.SQLite;
 
 namespace ShowMeTheDiff
-{
+{   //main lines page, lists the different versions of the line 
+
     public partial class MainLines : Form
     {
         private int curLine;
@@ -48,18 +40,15 @@ namespace ShowMeTheDiff
             }
             else {
                 label1.Text = "Click on line to see more line details";
+                string todisplay = string.Format("{0} \t| {1}", RelativeDate.relativedate(reader["version_Date"]), reader["version_Text"]);
+                listBox1.Items.Add(new LineToDisplay { line_Text = todisplay.Trim(), line_id = reader["version_ID"], currLineNumber = curLine });
             }
             while (reader.Read())
             {
-                //object todisplay = reader["version_Text"];
 
-
-                string todisplay = string.Format("{0} \t| {1}", RelativeDate.relativedate(reader["version_Date"]), reader["version_Text"].ToString().Trim());
-                //string l;
-                listBox1.Items.Add(new LineToDisplay { line_Text = todisplay, line_id = reader["version_ID"], currLineNumber = curLine });
+                string todisplay = string.Format("{0} \t| {1}", RelativeDate.relativedate(reader["version_Date"]), reader["version_Text"]);
+                listBox1.Items.Add(new LineToDisplay { line_Text = todisplay.Trim(), line_id = reader["version_ID"], currLineNumber = curLine });
                 
-
-            //Console.WriteLine(reader["Line_ID"] + ","); //better way of getting it keh :-)
             
 
             }
@@ -70,8 +59,7 @@ namespace ShowMeTheDiff
 
         private void OnListBoxItemClick(object sender, EventArgs e)
         {
-            MoreLineDetails md = new MoreLineDetails((listBox1.SelectedItem as LineToDisplay).line_Text, (listBox1.SelectedItem as LineToDisplay).line_id, (listBox1.SelectedItem as LineToDisplay).currLineNumber, MyVSPackagePackage.SqlConnection);
-            
+            MoreLineDetails md = new MoreLineDetails((listBox1.SelectedItem as LineToDisplay).line_Text, (listBox1.SelectedItem as LineToDisplay).line_id, (listBox1.SelectedItem as LineToDisplay).currLineNumber, MyVSPackagePackage.SqlConnection);           
             md.Show();
         }
 
@@ -80,7 +68,7 @@ namespace ShowMeTheDiff
 
         
     }
-
+    //properties to be made available in the more detals class                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
     class LineToDisplay
     {
         public  string line_Text { get; set; }

@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Data.SQLite;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ShowMeTheDiff
-{
+{   //Screen with more line details
     public partial class MoreLineDetails : Form
     {
         private readonly int curLine;
@@ -19,7 +13,7 @@ namespace ShowMeTheDiff
         private int currentline;
         private string line_Text;
 
-
+        //handle information such as the date, line, line number and comment
         public MoreLineDetails(string line_Text, object selectedValue, int currentline, SQLiteConnection sqlConnection)
         {
             InitializeComponent();
@@ -40,7 +34,7 @@ namespace ShowMeTheDiff
 
                 label_lineText.Text = string.Format("{0}", reader["version_Text"].ToString().Trim() );
                 label_timeStamp.Text = string.Format("{0}", RelativeDate.relativedate( reader["version_Date"]));
-                label_LineNumber.Text = string.Format("{0}", currentline);
+                label_LineNumber.Text = string.Format("{0}", (currentline +1));
                 textBox1.Text = string.Format("{0}", reader["version_Comment"] );
 
             }
@@ -52,14 +46,11 @@ namespace ShowMeTheDiff
                 label3.Text = "Below is a space provided for you to write a comment about this line";
             }
             else { label3.Text = "Edit comment below"; }
-            
-            
-
 
             sqlConnection.Close();
 
         }
-
+        //control for delete button to delete a line version
         private void button1_Click(object sender, EventArgs e)
         {
             sqlConnection.Open();
@@ -76,7 +67,7 @@ namespace ShowMeTheDiff
             main.Show();
 
         }
-
+        //handle the ok event and updates the comment in the database
         private void button2_Click(object sender, EventArgs e)
         {
             sqlConnection.Open();
@@ -90,7 +81,7 @@ namespace ShowMeTheDiff
 
         }
 
-
+        //handles closing event and does the same thing as the OK button
         protected override void OnClosing(CancelEventArgs e)
         {
             
@@ -102,7 +93,7 @@ namespace ShowMeTheDiff
             
             base.OnClosing(e);
         }
-
+        //Use this line instead from the more line details screen
         private void button3_Click(object sender, EventArgs e)
         {
             var fn = showDiffLines.Instance.currentFile;

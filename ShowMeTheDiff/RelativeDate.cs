@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ShowMeTheDiff
-{
+{   //static class for the retlative date
     class RelativeDate
     {
         public static object relativedate(object d)
@@ -31,7 +31,13 @@ namespace ShowMeTheDiff
                 if (since < threshold)
                 {
                     TimeSpan t = new TimeSpan((DateTime.Now.Ticks - theDate.Ticks));
-                    return string.Format(thresholds[threshold], (t.Days > 365 ? t.Days / 365 : (t.Days > 0 ? t.Days : (t.Hours > 0 ? t.Hours : (t.Minutes > 0 ? t.Minutes : (t.Seconds > 0 ? t.Seconds : 0))))).ToString());
+                    return string.Format
+                        (thresholds[threshold], 
+                        (t.Days > 365 ? t.Days / 365 : 
+                        (t.Days > 0 ? t.Days : 
+                        (t.Hours > 0 ? t.Hours : 
+                        (t.Minutes > 0 ? t.Minutes : 
+                        (t.Seconds > 0 ? t.Seconds : 0))))).ToString());
                 }
             }
             return "";

@@ -6,17 +6,11 @@
 
 using System;
 using System.ComponentModel.Design;
-using System.Globalization;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Editor;
-using EnvDTE80;
-using EnvDTE;
-using Microsoft.VisualStudio.Text.Operations;
-using Microsoft.VisualStudio.Text;
-using System.Windows.Forms;
+
 
 namespace ShowMeTheDiff
 {
@@ -96,10 +90,10 @@ namespace ShowMeTheDiff
 
 
 
-
+        //get what is currently on the screen, return viewhost
         private IWpfTextViewHost GetCurrentViewHost()
         {
-            var textManager = this.ServiceProvider.GetService(typeof(SVsTextManager)) as IVsTextManager;
+            var textManager = ServiceProvider.GetService(typeof(SVsTextManager)) as IVsTextManager;
             IVsTextView textView = null;
             int mustHaveFocus = 1;
             textManager.GetActiveView(mustHaveFocus, null, out textView);
@@ -123,10 +117,8 @@ namespace ShowMeTheDiff
 
 
 
-
+        //get what is currently on the screen, return text lines.
         private string GetAllText(IWpfTextViewHost viewHost) =>
-           // viewHost.TextView.Caret.ContainingTextViewLine;
-            //viewHost.TextView.GetTextViewLineContainingBufferPosition(viewHost.TextView.Caret.Position); 
             viewHost.TextView.TextSnapshot.GetText();
 
         /// <summary>
@@ -138,12 +130,10 @@ namespace ShowMeTheDiff
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            
-            
+            //get the text and position of the carret
             var viewhost = GetCurrentViewHost();
             var line = viewhost.TextView.Caret.ContainingTextViewLine.Extent.GetText();
-            var position = viewhost.TextView.Caret.Position.BufferPosition.Position;
-            
+            var position = viewhost.TextView.Caret.Position.BufferPosition.Position;         
 
             var screengrab = GetAllText(viewhost); //grab screen host
             
@@ -153,59 +143,24 @@ namespace ShowMeTheDiff
             var eP = position; // endPosition
             while (eP <= screengrab.Length - 1 && screengrab[eP] != '\r' && screengrab[eP] != '\n') eP++;
             var myline = screengrab.Substring(sP - 1 , eP - sP +1); //the length of it should be start position - end position
-            
+            //get what is on the current file
             var fn = ShowMeTheDiff.Instance.WorkingFile;
             var everything = System.IO.File.ReadAllText(fn);
             
 
             var newLines = "";
-            //int counterMyLine = 0;
-            //everything[position] = "s";
-            //for (int i = sP; i < eP; i++) {
-            //everything[i] = myline[counterMyLine];
-            //}
-
-
-
+            //get line to replace
             var sP1 = sP;
             var eP1 = eP;
             while (sP1 > 0 && everything[sP1] != '\r' && everything[sP1] != '\n') sP1--;
             while (eP1 < everything.Length - 1 && everything[eP1] != '\r' && everything[eP1] != '\n') eP1++;
 
-
-            newLines += everything.Substring(0, sP1-1);//, everything.Length-eP+1
+            //lines with the new line updated and write back to current verison
+            newLines += everything.Substring(0, sP1-1);
             newLines +=  myline;
             newLines += everything.Substring(eP1);
 
             System.IO.File.WriteAllText(fn, newLines);
-            
-            //var lol = everything[position];
-            //var lines = System.IO.File.ReadAllLines(fn);
-            //lines[12] = "lol yas";
-
-            
-
-            //TextExtent extent = new TextExtent();
-            //SnapshotSpan range = new SnapshotSpan() ;
-            //ITrackingSpan trackingSpan = range.Snapshot.CreateTrackingSpan(extent.Span, SpanTrackingMode.EdgeInclusive);
-            //ITextSnapshot m_snapshot = trackingSpan.TextBuffer.CurrentSnapshot;
-            //var curline = trackingSpan.GetText(m_snapshot);
-            //trackingSpan.TextBuffer.Replace(trackingSpan.GetSpan(m_snapshot), line);
-
-
-            //var dte = (DTE2)ServiceProvider.GetService(typeof(DTE));
-            //var lol = dte.MainWindow.Document;
-
-            /*string title = "UseThisLineInstead";
-
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.ServiceProvider,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST); */
 
         }
     }
