@@ -117,6 +117,10 @@
     <Content Include="Resources\ShowMeTheDiffPackage.ico" />
     <Content Include="Resources\UseThisLineInstead.png" />
     <Content Include="Resources\VSPackage1.ico" />
+    <Content Include="ShowMeTheDiff.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="stylesheet.css" />
   </ItemGroup>
   <ItemGroup>

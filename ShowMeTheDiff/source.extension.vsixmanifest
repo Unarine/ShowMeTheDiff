@@ -1,9 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="ShowMeTheDiff.Company.9e186c2d-0ee7-47d0-b995-cf64c3697176" Version="1.0" Language="en-US" Publisher="Company" />
+    <Identity Id="ShowMeTheDiff.Company.9e186c2d-0ee7-47d0-b995-cf64c3697176" Version="1.0" Language="en-US" Publisher="Unarine Nkhumeleni" />
     <DisplayName>ShowMeTheDiff</DisplayName>
-    <Description>Empty VSIX Project.</Description>
+    <Description xml:space="preserve">An Extention to help first-time programmers with source cotrol </Description>
+    <Icon>ShowMeTheDiff.png</Icon>
+    <PreviewImage>ShowMeTheDiff.png</PreviewImage>
+    <Tags>Version control, Computer Science Education</Tags>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0]" />
